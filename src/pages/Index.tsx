@@ -139,7 +139,7 @@ const Index = () => {
         {topics.length > 0 && (
           <div className="space-y-6">
             <TextAnalysis topics={topics} />
-            <VideoRecommendations topics={topics} />
+            <VideoRecommendations topics={topics} text={text} />
           </div>
         )}
       </div>

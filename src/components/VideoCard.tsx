@@ -9,6 +9,7 @@ interface Video {
   duration: string;
   views: string;
   channel: string;
+  url: string;
 }
 
 interface VideoCardProps {
@@ -16,8 +17,17 @@ interface VideoCardProps {
 }
 
 export const VideoCard = ({ video }: VideoCardProps) => {
+  const handleClick = () => {
+    if (video.url) {
+      window.open(video.url, '_blank');
+    }
+  };
+
   return (
-    <Card className="overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-[1.02]">
+    <Card 
+      className="overflow-hidden group cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+      onClick={handleClick}
+    >
       <div className="relative">
         <img
           src={video.thumbnail}
