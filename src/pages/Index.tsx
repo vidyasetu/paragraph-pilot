@@ -72,14 +72,14 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-pink-100 via-pink-50 to-white py-8 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-            Study Smart
+            Vidya Setu
           </h1>
           <p className="text-lg text-gray-600">
-            Capture or paste your text to discover relevant educational videos
+            Your right to quality education
           </p>
         </div>
 
