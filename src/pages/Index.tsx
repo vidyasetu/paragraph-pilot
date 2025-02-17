@@ -7,11 +7,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Camera, ImageOptions, CameraResultType, CameraSource } from '@capacitor/camera';
 import VideoRecommendations from "@/components/VideoRecommendations";
 import TextAnalysis from "@/components/TextAnalysis";
-import { Camera as CameraIcon } from "lucide-react";
+import { Camera as CameraIcon, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [text, setText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
   const [topics, setTopics] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -25,13 +27,31 @@ const Index = () => {
       });
 
       if (image.base64String) {
-        // For MVP, we'll just show the image was captured successfully
-        toast({
-          title: "Image captured!",
-          description: "Image processing will be implemented in the next version.",
-        });
-        // In a full version, you would send this to an OCR service
-        // and get the text back
+        setIsProcessingImage(true);
+        try {
+          const { data, error } = await supabase.functions.invoke('process-image', {
+            body: { image: image.base64String },
+          });
+
+          if (error) throw error;
+
+          if (data.text) {
+            setText(data.text);
+            toast({
+              title: "Text extracted successfully",
+              description: "The text has been extracted from your image.",
+            });
+          }
+        } catch (error) {
+          console.error('Error processing image:', error);
+          toast({
+            title: "Error processing image",
+            description: "Could not extract text from the image. Please try again.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsProcessingImage(false);
+        }
       }
     } catch (error) {
       toast({
@@ -90,9 +110,14 @@ const Index = () => {
                 onClick={takePicture}
                 variant="outline"
                 className="gap-2"
+                disabled={isProcessingImage}
               >
-                <CameraIcon className="w-4 h-4" />
-                Take Picture
+                {isProcessingImage ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <CameraIcon className="w-4 h-4" />
+                )}
+                {isProcessingImage ? "Processing..." : "Take Picture"}
               </Button>
             </div>
             <Textarea
