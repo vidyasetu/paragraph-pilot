@@ -4,14 +4,43 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Camera, ImageOptions, CameraResultType, CameraSource } from '@capacitor/camera';
 import VideoRecommendations from "@/components/VideoRecommendations";
 import TextAnalysis from "@/components/TextAnalysis";
+import { Camera as CameraIcon } from "lucide-react";
 
 const Index = () => {
   const [text, setText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [topics, setTopics] = useState<string[]>([]);
   const { toast } = useToast();
+
+  const takePicture = async () => {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Base64,
+        source: CameraSource.Camera,
+      });
+
+      if (image.base64String) {
+        // For MVP, we'll just show the image was captured successfully
+        toast({
+          title: "Image captured!",
+          description: "Image processing will be implemented in the next version.",
+        });
+        // In a full version, you would send this to an OCR service
+        // and get the text back
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Could not access camera. Please ensure camera permissions are granted.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
@@ -50,14 +79,24 @@ const Index = () => {
             Study Smart
           </h1>
           <p className="text-lg text-gray-600">
-            Paste your text and discover relevant educational videos
+            Capture or paste your text to discover relevant educational videos
           </p>
         </div>
 
         <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-xl">
           <div className="space-y-4">
+            <div className="flex justify-end mb-2">
+              <Button
+                onClick={takePicture}
+                variant="outline"
+                className="gap-2"
+              >
+                <CameraIcon className="w-4 h-4" />
+                Take Picture
+              </Button>
+            </div>
             <Textarea
-              placeholder="Paste your textbook paragraph here..."
+              placeholder="Paste your textbook paragraph here or take a picture..."
               className="min-h-[200px] resize-none p-4 text-lg"
               value={text}
               onChange={(e) => setText(e.target.value)}
