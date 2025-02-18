@@ -1,27 +1,15 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { Camera as CameraIcon, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [isProcessingImage, setIsProcessingImage] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/auth");
-    }
-  };
 
   const takePicture = async () => {
     try {
@@ -86,15 +74,6 @@ const Index = () => {
           <p className="text-lg text-gray-600">
             Your right to quality education
           </p>
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              supabase.auth.signOut();
-              navigate("/auth");
-            }}
-          >
-            Sign Out
-          </Button>
         </div>
 
         <Card className="p-6 bg-white/80 backdrop-blur-sm shadow-xl">
